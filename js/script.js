@@ -42,7 +42,7 @@ const GameController = (() => {
 
   const defineResult = () => {
     const gameBoard = Gameboard.getBoard();
-    let isTie = false;
+
     let line1 = [gameBoard[0][0], gameBoard[0][1], gameBoard[0][2]];
     let line2 = [gameBoard[1][0], gameBoard[1][1], gameBoard[1][2]];
     let line3 = [gameBoard[2][0], gameBoard[2][1], gameBoard[2][2]];
@@ -64,7 +64,7 @@ const GameController = (() => {
     }
 
     //tie
-    if (lines.every((line) => !line.includes(""))) {
+    if (!gameBoard.flat().includes('')) {
       console.log(`Tie!`);
       Gameboard.clearBoard();
       return true;
