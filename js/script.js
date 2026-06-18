@@ -9,10 +9,6 @@ const Gameboard = (() => {
     ["", "", ""],
   ];
 
-  const showGameBoard = () => {
-    console.log(JSON.stringify(gameBoard));
-  };
-
   const putMarker = (row, column, marker) => {
     if (gameBoard[row][column] !== "") {
       return null;
@@ -27,7 +23,7 @@ const Gameboard = (() => {
 
   const getBoard = () => gameBoard;
 
-  return { showGameBoard, getBoard, putMarker, clearBoard };
+  return { getBoard, putMarker, clearBoard };
 })();
 
 const GameController = (() => {
@@ -35,6 +31,7 @@ const GameController = (() => {
   const player2 = Player("John", "O");
 
   let currentPlayer = player1;
+  let gameStatus;
 
   const switchPlayers = () => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
@@ -57,32 +54,93 @@ const GameController = (() => {
     //winner
     for (let line of lines) {
       if (line.every((cell) => cell === line[0]) && line[0] !== "") {
-        console.log(`The Winner is ${currentPlayer.name}!`);
-        Gameboard.clearBoard();
+        gameStatus = "win";
         return true;
       }
     }
 
     //tie
-    if (!gameBoard.flat().includes('')) {
-      console.log(`Tie!`);
-      Gameboard.clearBoard();
+    if (!gameBoard.flat().includes("")) {
+      gameStatus = "tie";
       return true;
     }
 
     return false;
   };
 
+  const getCurrentPlayer = () => currentPlayer;
+
   const playRound = (row, col) => {
     if (Gameboard.putMarker(row, col, currentPlayer.marker) !== null) {
-      Gameboard.showGameBoard();
-
       if (!defineResult()) {
         switchPlayers();
       }
     }
   };
 
-  return { playRound };
+  const getGameStatus = () => {
+    if (gameStatus === "win") {
+      return `The winner is ${currentPlayer.name}`;
+    } else if (gameStatus === "tie") {
+      return `Tie!`;
+    } else {
+      return false;
+    }
+  };
+
+  const resetGame = () => {
+    Gameboard.clearBoard();
+    gameStatus = null;
+    currentPlayer = player1;
+  };
+
+  return { playRound, getCurrentPlayer, getGameStatus, resetGame };
 })();
 
+const ScreenController = (() => {
+  const boardElem = document.querySelector(".board");
+  const resultElem = document.querySelector(".result");
+  const currPlayerElem = document.querySelector(".currPlayer");
+  const resetBtn = document.querySelector(".resetBtn");
+
+  const updateScreen = () => {
+    let board = Gameboard.getBoard();
+
+    document.querySelectorAll(".cell").forEach((cell) => {
+      cell.textContent = board[cell.dataset.row][cell.dataset.col];
+    });
+
+    currPlayerElem.textContent = `Your turn, ${GameController.getCurrentPlayer().name} (${GameController.getCurrentPlayer().marker})`;
+  };
+
+  const handleClick = (e) => {
+    if (e.target.classList.contains("cell")) {
+      if (GameController.getGameStatus()) {
+        return;
+      } else {
+        GameController.playRound(e.target.dataset.row, e.target.dataset.col);
+        updateScreen();
+      }
+    }
+
+    if (GameController.getGameStatus()) {
+      resultElem.textContent = GameController.getGameStatus();
+      currPlayerElem.classList.add('hide');
+      resetBtn.classList.add("show");
+    }
+  };
+
+  resetBtn.addEventListener("click", () => {
+    resetBtn.classList.remove("show");
+    currPlayerElem.classList.remove('hide');
+    GameController.resetGame();
+    resultElem.textContent = "";
+    updateScreen();
+  });
+
+  boardElem.addEventListener("click", handleClick);
+
+  return { updateScreen };
+})();
+
+ScreenController.updateScreen();
