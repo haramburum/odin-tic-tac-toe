@@ -116,16 +116,16 @@ const GameController = (() => {
   const resultElem = document.querySelector(".result");
   const currPlayerElem = document.querySelector(".currPlayer");
   const resetBtn = document.querySelector(".resetBtn");
-  const startBtn = document.querySelector(".welcome__startBrn");
-  const welcomeDiv = document.querySelector(".welcome");
-  const container = document.querySelector(".container");
+  const welcomeForm = document.querySelector(".welcomeForm");
+  const gameDiv = document.querySelector(".game");
   const newGameBtn = document.querySelector(".newGameBtn");
-  const player1Inpt = document.querySelector(".welcome__player1");
-  const player2Inpt = document.querySelector(".welcome__player2");
+  const startBtn = document.querySelector(".welcomeForm__startBrn");
+  const player1Inpt = document.querySelector(".welcomeForm__player1");
+  const player2Inpt = document.querySelector(".welcomeForm__player2");
 
   const newGameHandler = () => {
-    container.classList.add("hide");
-    welcomeDiv.classList.remove("hide");
+    gameDiv.classList.add("hide");
+    welcomeForm.classList.remove("hide");
     wipeScreenData();
   };
 
@@ -136,8 +136,8 @@ const GameController = (() => {
     player1Inpt.value = "";
     player2Inpt.value = "";
     GameController.setPlayers(player1Name, player2Name);
-    container.classList.remove("hide");
-    welcomeDiv.classList.add("hide");
+    gameDiv.classList.remove("hide");
+    welcomeForm.classList.add("hide");
     updateScreen();
   };
 
@@ -187,6 +187,4 @@ const GameController = (() => {
   newGameBtn.addEventListener("click", newGameHandler);
   startBtn.addEventListener("click", startBtnHandler);
   boardElem.addEventListener("click", cellClickHandler);
-
-  return { updateScreen };
 })();
