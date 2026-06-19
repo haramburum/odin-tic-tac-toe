@@ -106,7 +106,7 @@ const GameController = (() => {
     getCurrentPlayer,
     getGameStatus,
     resetGame,
-    setPlayers
+    setPlayers,
   };
 })();
 
@@ -119,48 +119,34 @@ const GameController = (() => {
   const startBtn = document.querySelector(".welcome__startBrn");
   const welcomeDiv = document.querySelector(".welcome");
   const container = document.querySelector(".container");
-  const newGameBtn = document.querySelector('.newGameBtn');
+  const newGameBtn = document.querySelector(".newGameBtn");
   const player1Inpt = document.querySelector(".welcome__player1");
   const player2Inpt = document.querySelector(".welcome__player2");
 
-  newGameBtn.addEventListener('click', () => {
-    GameController.resetGame();
-    resetBtn.classList.remove("show");
-    newGameBtn.classList.remove("show");
-    container.classList.add('hide');
-    welcomeDiv.classList.remove('hide');
-    currPlayerElem.classList.remove("hide");
-    resultElem.classList.add('hide');
-    updateScreen();
-  });
+  const newGameHandler = () => {
+    container.classList.add("hide");
+    welcomeDiv.classList.remove("hide");
+    wipeScreenData();
+  };
 
-  startBtn.addEventListener("click", () => {
-    const player1Name = player1Inpt.value || 'Player 1';
-    const player2Name = player2Inpt.value || 'Player 2';
-    player1Inpt.value = ''; 
-    player2Inpt.value = '';
+  const startBtnHandler = () => {
+    const player1Name = player1Inpt.value || "Player 1";
+    const player2Name = player2Inpt.value || "Player 2";
+    player1Inpt.value = "";
+    player2Inpt.value = "";
     GameController.setPlayers(player1Name, player2Name);
     container.classList.remove("hide");
     welcomeDiv.classList.add("hide");
     updateScreen();
-  });
-
-  const updateScreen = () => {
-    let board = Gameboard.getBoard();
-
-    document.querySelectorAll(".cell").forEach((cell) => {
-      cell.textContent = board[cell.dataset.row][cell.dataset.col];
-    });
-
-    currPlayerElem.textContent = `Your turn, ${GameController.getCurrentPlayer().name} (${GameController.getCurrentPlayer().marker})`;
   };
 
-  const handleClick = (e) => {
+  const cellClickHandler = (e) => {
     if (e.target.classList.contains("cell")) {
       if (GameController.getGameStatus()) {
         return;
       } else {
-        GameController.playRound(e.target.dataset.row, e.target.dataset.col);
+        let cell = e.target;
+        GameController.playRound(cell.dataset.row, cell.dataset.col);
         updateScreen();
       }
     }
@@ -173,16 +159,33 @@ const GameController = (() => {
     }
   };
 
-  resetBtn.addEventListener("click", () => {
+  const resetBtnHandler = () => {
+    wipeScreenData();
+  };
+
+  const updateScreen = () => {
+    let board = Gameboard.getBoard();
+
+    document.querySelectorAll(".cell").forEach((cell) => {
+      cell.textContent = board[cell.dataset.row][cell.dataset.col];
+    });
+
+    currPlayerElem.textContent = `Your turn, ${GameController.getCurrentPlayer().name} (${GameController.getCurrentPlayer().marker})`;
+  };
+
+  const wipeScreenData = () => {
+    GameController.resetGame();
     resetBtn.classList.remove("show");
     newGameBtn.classList.remove("show");
     currPlayerElem.classList.remove("hide");
-    GameController.resetGame();
     resultElem.textContent = "";
     updateScreen();
-  });
+  };
 
-  boardElem.addEventListener("click", handleClick);
+  resetBtn.addEventListener("click", resetBtnHandler);
+  newGameBtn.addEventListener("click", newGameHandler);
+  startBtn.addEventListener("click", startBtnHandler);
+  boardElem.addEventListener("click", cellClickHandler);
 
   return { updateScreen };
 })();
