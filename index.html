@@ -9,7 +9,8 @@
   </head>
   <body>
     <h1>Tic Tac Toe</h1>
-    <div class="welcome">
+    <form class="welcome">
+      <p>Enter the names of the players to start the game: </p>
       <input
         type="text"
         class="welcome__player1"
@@ -20,8 +21,8 @@
         class="welcome__player2"
         placeholder="Player 2 name..."
       />
-      <button class="welcome__startBrn">Start game</button>
-    </div>
+      <button type="submit" class="welcome__startBrn">Start game</button>
+    </form>
     <div class="container hide">
       <p class="currPlayerText"><span class="currPlayer"></span></p>
       <p class="result"></p>

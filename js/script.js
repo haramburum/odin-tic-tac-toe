@@ -129,7 +129,8 @@ const GameController = (() => {
     wipeScreenData();
   };
 
-  const startBtnHandler = () => {
+  const startBtnHandler = (e) => {
+    e.preventDefault();
     const player1Name = player1Inpt.value || "Player 1";
     const player2Name = player2Inpt.value || "Player 2";
     player1Inpt.value = "";
