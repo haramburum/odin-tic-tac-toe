@@ -119,10 +119,26 @@ const GameController = (() => {
   const startBtn = document.querySelector(".welcome__startBrn");
   const welcomeDiv = document.querySelector(".welcome");
   const container = document.querySelector(".container");
+  const newGameBtn = document.querySelector('.newGameBtn');
+  const player1Inpt = document.querySelector(".welcome__player1");
+  const player2Inpt = document.querySelector(".welcome__player2");
+
+  newGameBtn.addEventListener('click', () => {
+    GameController.resetGame();
+    resetBtn.classList.remove("show");
+    newGameBtn.classList.remove("show");
+    container.classList.add('hide');
+    welcomeDiv.classList.remove('hide');
+    currPlayerElem.classList.remove("hide");
+    resultElem.classList.add('hide');
+    updateScreen();
+  });
 
   startBtn.addEventListener("click", () => {
-    const player1Name = document.querySelector(".welcome__player1").value || 'Player 1';
-    const player2Name = document.querySelector(".welcome__player2").value || 'Player 2'; 
+    const player1Name = player1Inpt.value || 'Player 1';
+    const player2Name = player2Inpt.value || 'Player 2';
+    player1Inpt.value = ''; 
+    player2Inpt.value = '';
     GameController.setPlayers(player1Name, player2Name);
     container.classList.remove("hide");
     welcomeDiv.classList.add("hide");
@@ -152,12 +168,14 @@ const GameController = (() => {
     if (GameController.getGameStatus()) {
       resultElem.textContent = GameController.getGameStatus();
       currPlayerElem.classList.add("hide");
+      newGameBtn.classList.add("show");
       resetBtn.classList.add("show");
     }
   };
 
   resetBtn.addEventListener("click", () => {
     resetBtn.classList.remove("show");
+    newGameBtn.classList.remove("show");
     currPlayerElem.classList.remove("hide");
     GameController.resetGame();
     resultElem.textContent = "";
