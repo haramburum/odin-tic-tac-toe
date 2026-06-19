@@ -2,6 +2,7 @@ const Player = (name, marker) => {
   return { name, marker };
 };
 
+//GAMEBOARD
 const Gameboard = (() => {
   const gameBoard = [
     ["", "", ""],
@@ -26,15 +27,21 @@ const Gameboard = (() => {
   return { getBoard, putMarker, clearBoard };
 })();
 
+//GAME CONTROLLER
 const GameController = (() => {
-  const player1 = Player("Ivan", "X");
-  const player2 = Player("John", "O");
-
-  let currentPlayer = player1;
+  let player1;
+  let player2;
+  let currentPlayer;
   let gameStatus;
 
   const switchPlayers = () => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
+  };
+
+  const setPlayers = (name1, name2) => {
+    player1 = Player(name1, "X");
+    player2 = Player(name2, "O");
+    currentPlayer = player1;
   };
 
   const defineResult = () => {
@@ -94,14 +101,33 @@ const GameController = (() => {
     currentPlayer = player1;
   };
 
-  return { playRound, getCurrentPlayer, getGameStatus, resetGame };
+  return {
+    playRound,
+    getCurrentPlayer,
+    getGameStatus,
+    resetGame,
+    setPlayers
+  };
 })();
 
-const ScreenController = (() => {
+//SCREEN CONTROLLER
+(function ScreenController() {
   const boardElem = document.querySelector(".board");
   const resultElem = document.querySelector(".result");
   const currPlayerElem = document.querySelector(".currPlayer");
   const resetBtn = document.querySelector(".resetBtn");
+  const startBtn = document.querySelector(".welcome__startBrn");
+  const welcomeDiv = document.querySelector(".welcome");
+  const container = document.querySelector(".container");
+
+  startBtn.addEventListener("click", () => {
+    const player1Name = document.querySelector(".welcome__player1").value || 'Player 1';
+    const player2Name = document.querySelector(".welcome__player2").value || 'Player 2'; 
+    GameController.setPlayers(player1Name, player2Name);
+    container.classList.remove("hide");
+    welcomeDiv.classList.add("hide");
+    updateScreen();
+  });
 
   const updateScreen = () => {
     let board = Gameboard.getBoard();
@@ -125,14 +151,14 @@ const ScreenController = (() => {
 
     if (GameController.getGameStatus()) {
       resultElem.textContent = GameController.getGameStatus();
-      currPlayerElem.classList.add('hide');
+      currPlayerElem.classList.add("hide");
       resetBtn.classList.add("show");
     }
   };
 
   resetBtn.addEventListener("click", () => {
     resetBtn.classList.remove("show");
-    currPlayerElem.classList.remove('hide');
+    currPlayerElem.classList.remove("hide");
     GameController.resetGame();
     resultElem.textContent = "";
     updateScreen();
@@ -142,5 +168,3 @@ const ScreenController = (() => {
 
   return { updateScreen };
 })();
-
-ScreenController.updateScreen();
